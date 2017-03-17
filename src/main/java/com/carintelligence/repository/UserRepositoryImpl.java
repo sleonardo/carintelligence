@@ -5,6 +5,10 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.ParameterExpression;
+import javax.persistence.criteria.Root;
 
 import org.springframework.stereotype.Repository;
 
@@ -42,7 +46,13 @@ public class UserRepositoryImpl implements UserRepository
     public List<User> findAll()
     {
         // Returns all the users in our system.
-        TypedQuery<User> query = em.createNamedQuery("User.findAll", User.class);
+//        TypedQuery<User> query = em.createNamedQuery("User.findAll", User.class);
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+
+        CriteriaQuery<User> q = cb.createQuery(User.class);
+        Root<User> c = q.from(User.class);
+        q.select(c);
+        TypedQuery<User> query = em.createQuery(q);
         return query.getResultList();
     }
 
@@ -51,7 +61,13 @@ public class UserRepositoryImpl implements UserRepository
     public List<User> paginate(int offset, int limit)
     {
         // Returns the list of paginated users.
-        TypedQuery<User> query = em.createNamedQuery("User.findAll", User.class);
+//        TypedQuery<User> query = em.createNamedQuery("User.findAll", User.class);
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+
+        CriteriaQuery<User> q = cb.createQuery(User.class);
+        Root<User> c = q.from(User.class);
+        q.select(c);
+        TypedQuery<User> query = em.createQuery(q);
         return query.setFirstResult(offset).setMaxResults(limit).getResultList();
     }
 

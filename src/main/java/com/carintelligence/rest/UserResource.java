@@ -19,6 +19,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.carintelligence.model.ApiResponse;
 import com.carintelligence.model.User;
 import com.carintelligence.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,12 +39,28 @@ public class UserResource
 
     private final String resourceURI = "/users";
 
+    ApiResponse response = new ApiResponse();
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<User> list(@DefaultValue("0") @QueryParam("offset") int offset, @DefaultValue("20") @QueryParam("limit") int limit)
+    public Response list(@DefaultValue("0") @QueryParam("offset") int offset, @DefaultValue("20") @QueryParam("limit") int limit)
     {
         // Handles GET on /users. Lists all the users we have in our system.
-        return userService.paginate(offset, limit);
+        response = new ApiResponse(Response.Status.OK.getStatusCode(), "User");
+        try {
+            //Creamos la respuesta generica del API
+            response = new ApiResponse(Response.Status.OK.getStatusCode(),Response.Status.OK.getReasonPhrase());
+            //cargamos el objeto a leer desde el cliente
+            List<User> entitiesList = userService.paginate(offset, limit);
+            response.getEntities().addAll(entitiesList);
+            //retornamos la respuesta
+        } catch (Exception e){
+            response = new ApiResponse(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),Response.Status.INTERNAL_SERVER_ERROR.getReasonPhrase());
+            return Response.status(Response.Status.OK.getStatusCode()).entity(response).build();
+        }
+
+        return Response.status(Response.Status.OK.getStatusCode()).entity(response).build();
+//        return userService.paginate(offset, limit);
     }
 
 

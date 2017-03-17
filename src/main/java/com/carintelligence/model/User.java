@@ -13,6 +13,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.eclipse.persistence.oxm.annotations.XmlInverseReference;
 
 /**
@@ -22,9 +23,9 @@ import org.eclipse.persistence.oxm.annotations.XmlInverseReference;
 @XmlRootElement
 @Entity
 @Table(name = "users")
-@NamedQueries({ @NamedQuery(name = "User.findAll", query = "SELECT u FROM User u") })
-public class User
-{
+//@NamedQueries({ @NamedQuery(name = "User.findAll", query = "SELECT u FROM User u") })
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
+public class User extends AppEntities {
     @Id
     @GeneratedValue
     private Long id;
@@ -35,12 +36,12 @@ public class User
 
     @XmlInverseReference(mappedBy="assignee")
     @ElementCollection
-    @OneToMany(fetch = FetchType.EAGER, mappedBy="assignee")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy="assignee")
     private Set<Task> tasks;
 
     @XmlInverseReference(mappedBy="owner")
     @ElementCollection
-    @OneToMany(fetch = FetchType.EAGER, mappedBy="owner")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy="owner")
     private Set<Project> owningProject;
 
     public String getEmailId()

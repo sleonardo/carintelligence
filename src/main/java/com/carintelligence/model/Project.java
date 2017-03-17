@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 @Table(name = "projects")
 @NamedQueries({ @NamedQuery(name = "Project.findAll", query = "SELECT p FROM Project p") })
-public class Project
+public class Project extends AppEntities
 {
 
     @Id

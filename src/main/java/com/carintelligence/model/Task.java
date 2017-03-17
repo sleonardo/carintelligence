@@ -19,7 +19,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Entity
 @Table(name = "tasks")
 @NamedQueries({ @NamedQuery(name = "Task.findAll", query = "SELECT t FROM Task t") })
-public class Task
+public class Task extends AppEntities
 {
 
     @Id
