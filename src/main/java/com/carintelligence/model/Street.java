@@ -9,16 +9,17 @@ import javax.persistence.*;
  */
 
 @Entity
-@Table(name = "street")
+@Table(name = "streets")
+@NamedQueries({ @NamedQuery(name = "Street.findAll", query = "SELECT s FROM Street s") })
 public class Street {
     @Id
     @GeneratedValue
     private Long streetId;
     private String name;
-    private boolean statusDefault;
-
+    private Integer statusDefault;
     @ManyToOne
-    private User userId;
+    @JoinColumn(name="user")
+    private User user;
 
     public Long getStreetId() {
         return streetId;
@@ -36,19 +37,19 @@ public class Street {
         this.name = name;
     }
 
-    public boolean isStatusDefault() {
+    public Integer getStatusDefault() {
         return statusDefault;
     }
 
-    public void setStatusDefault(boolean statusDefault) {
+    public void setStatusDefault(Integer statusDefault) {
         this.statusDefault = statusDefault;
     }
 
-    public User getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(User userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
     }
 }

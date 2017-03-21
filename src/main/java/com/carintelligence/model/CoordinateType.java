@@ -1,9 +1,7 @@
 package com.carintelligence.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.Set;
 
 /**
  * @author leonardo
@@ -19,6 +17,10 @@ public class CoordinateType {
     private Long coordinateTypeId;
     private String name;
     private String description;
+
+    @ElementCollection
+    @OneToMany(fetch = FetchType.LAZY, mappedBy="coordinateType")
+    private Set<Coordinate> coordinates;
 
     public Long getCoordinateTypeId() {
         return coordinateTypeId;

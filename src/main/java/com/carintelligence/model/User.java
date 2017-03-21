@@ -17,9 +17,11 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import org.eclipse.persistence.oxm.annotations.XmlInverseReference;
 
 /**
- * Project: carintelligence
- * Created by Leonardo Simoza on 09/3/17.
- **/
+ * @author leonardo
+ * @project carintelligence
+ * @date 09/3/17
+ */
+
 @XmlRootElement
 @Entity
 @Table(name = "users")
