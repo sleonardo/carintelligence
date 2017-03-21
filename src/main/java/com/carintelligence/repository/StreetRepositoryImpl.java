@@ -6,6 +6,9 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.util.List;
 
 /**
@@ -39,7 +42,12 @@ public class StreetRepositoryImpl implements StreetRepository {
     public List<Street> findAll()
     {
         // Returns all the streets in our system.
-        TypedQuery<Street> query = em.createNamedQuery("Street.findAll", Street.class);
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+
+        CriteriaQuery<Street> q = cb.createQuery(Street.class);
+        Root<Street> c = q.from(Street.class);
+        q.select(c);
+        TypedQuery<Street> query = em.createQuery(q);
         return query.getResultList();
     }
 
@@ -48,7 +56,12 @@ public class StreetRepositoryImpl implements StreetRepository {
     public List<Street> paginate(int offset, int limit)
     {
         // Returns the list of paginated streets.
-        TypedQuery<Street> query = em.createNamedQuery("Street.findAll", Street.class);
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+
+        CriteriaQuery<Street> q = cb.createQuery(Street.class);
+        Root<Street> c = q.from(Street.class);
+        q.select(c);
+        TypedQuery<Street> query = em.createQuery(q);
         return query.setFirstResult(offset).setMaxResults(limit).getResultList();
     }
 

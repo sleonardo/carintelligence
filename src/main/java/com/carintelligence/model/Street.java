@@ -1,6 +1,7 @@
 package com.carintelligence.model;
 
 import javax.persistence.*;
+import java.util.Set;
 
 /**
  * @author leonardo
@@ -11,7 +12,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "streets")
 @NamedQueries({ @NamedQuery(name = "Street.findAll", query = "SELECT s FROM Street s") })
-public class Street {
+public class Street extends AppEntities {
     @Id
     @GeneratedValue
     private Long streetId;
@@ -20,6 +21,10 @@ public class Street {
     @ManyToOne
     @JoinColumn(name="user")
     private User user;
+
+    @ElementCollection
+    @OneToMany(fetch = FetchType.LAZY, mappedBy="coordinateType")
+    private Set<Segment> segments;
 
     public Long getStreetId() {
         return streetId;

@@ -10,7 +10,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "segments")
-public class Segment {
+public class Segment extends AppEntities {
     @Id
     @GeneratedValue
     private Long segmentId;

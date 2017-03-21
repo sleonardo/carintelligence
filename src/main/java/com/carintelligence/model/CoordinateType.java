@@ -11,7 +11,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "coordinate_type")
-public class CoordinateType {
+public class CoordinateType extends AppEntities {
     @Id
     @GeneratedValue
     private Long coordinateTypeId;

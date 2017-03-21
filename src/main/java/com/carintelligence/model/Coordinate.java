@@ -10,7 +10,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "coordinates")
-public class Coordinate {
+public class Coordinate extends AppEntities {
     @Id
     @GeneratedValue
     private Long coordinateId;

@@ -1,5 +1,6 @@
 package com.carintelligence.rest;
 
+import com.carintelligence.model.ApiResponse;
 import com.carintelligence.model.Street;
 import com.carintelligence.service.StreetService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,17 +28,31 @@ public class StreetResource {
 
     private final String resourceURI = "/streets";
 
+    ApiResponse response = new ApiResponse();
+
     @GET
-    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-    public List<Street> list(@DefaultValue("0") @QueryParam("offset") int offset, @DefaultValue("20") @QueryParam("limit") int limit)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response list(@DefaultValue("0") @QueryParam("offset") int offset, @DefaultValue("20") @QueryParam("limit") int limit)
     {
         // Handles GET on /streets. Lists all the streets we have in our system.
-        return streetService.paginate(offset, limit);
+        response = new ApiResponse(Response.Status.OK.getStatusCode(), "User");
+        try {
+            //Generate response generic
+            response = new ApiResponse(Response.Status.OK.getStatusCode(),Response.Status.OK.getReasonPhrase());
+            //Load object at list
+            List<Street> entitiesList = streetService.paginate(offset, limit);
+            response.getEntities().addAll(entitiesList);
+        } catch (Exception e){
+            response = new ApiResponse(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),Response.Status.INTERNAL_SERVER_ERROR.getReasonPhrase());
+            //return error message
+            return Response.status(Response.Status.OK.getStatusCode()).entity(response).build();
+        }
+        //return response
+        return Response.status(Response.Status.OK.getStatusCode()).entity(response.toJSON()).build();
     }
 
-
     @GET
-    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+    @Produces(MediaType.APPLICATION_JSON)
     @Path("/{streetId}")
     public Street get(@PathParam("streetId") String streetId)
     {
@@ -47,10 +62,9 @@ public class StreetResource {
         return streetService.find(streetIdl);
     }
 
-
     @POST
-    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-    @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response create(Street street, @Context final HttpServletResponse response) throws URISyntaxException
     {
         // Handles POST on /streets. Creates a new street and adds it into an repository.
@@ -59,17 +73,15 @@ public class StreetResource {
         return Response.created(new URI(resourceURI + street.getStreetId())).build();
     }
 
-
     @PUT
     @Path("/{streetId}")
-    @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-    @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
     public Street update(Street street, @PathParam("streetId") Long streetId)
     {
         // Handles PUT on /streets/streetId. Updates the existing street with the new values.
         return streetService.update(street, streetId);
     }
-
 
     @DELETE
     @Path("/{streetId}")
