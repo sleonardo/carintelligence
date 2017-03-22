@@ -1,5 +1,8 @@
 package com.carintelligence.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.google.gson.annotations.Expose;
+
 import javax.persistence.*;
 import java.util.Set;
 
@@ -11,16 +14,23 @@ import java.util.Set;
 
 @Entity
 @Table(name = "coordinate_type")
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class CoordinateType extends AppEntities {
     @Id
     @GeneratedValue
+    @Expose
     private Long coordinateTypeId;
+    @Expose
     private String name;
     private String description;
 
-    @ElementCollection
-    @OneToMany(fetch = FetchType.LAZY, mappedBy="coordinateType")
-    private Set<Coordinate> coordinates;
+    public CoordinateType() {
+    }
+
+    public CoordinateType(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
 
     public Long getCoordinateTypeId() {
         return coordinateTypeId;

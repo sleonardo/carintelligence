@@ -1,5 +1,8 @@
 package com.carintelligence.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.google.gson.annotations.Expose;
+
 import javax.persistence.*;
 
 /**
@@ -10,21 +13,48 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "rules")
-public class Rule {
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
+public class Rule extends AppEntities {
     @Id
     @GeneratedValue
+    @Expose
     private Long ruleId;
-    private Boolean status;
+    @Expose
+    private Integer status;
+    @Expose
     private Integer day;
+    @Expose
     private String description;
+    @Expose
     private String hoursToParking;
+    @Expose
     private String beginHour;
+    @Expose
     private String endHour;
+    @Expose
     private String label;
+    @Expose
     private Integer frecuency;
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="street")
+    @Expose
     private Street street;
+
+    public Rule() {
+    }
+
+    public Rule(Integer status, Integer day, String description, String hoursToParking, String beginHour, String endHour, String label, Integer frecuency, Street street) {
+        this.status = status;
+        this.day = day;
+        this.description = description;
+        this.hoursToParking = hoursToParking;
+        this.beginHour = beginHour;
+        this.endHour = endHour;
+        this.label = label;
+        this.frecuency = frecuency;
+        this.street = street;
+    }
+
 
     public Long getRuleId() {
         return ruleId;
@@ -34,11 +64,11 @@ public class Rule {
         this.ruleId = ruleId;
     }
 
-    public Boolean getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(Boolean status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 

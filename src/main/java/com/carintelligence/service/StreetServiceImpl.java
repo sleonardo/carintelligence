@@ -1,12 +1,18 @@
 package com.carintelligence.service;
 
+import com.carintelligence.model.Rule;
+import com.carintelligence.model.Segment;
 import com.carintelligence.model.Street;
+import com.carintelligence.repository.RuleRepository;
 import com.carintelligence.repository.StreetRepository;
+import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author leonardo
@@ -17,7 +23,10 @@ import java.util.List;
 public class StreetServiceImpl implements StreetService {
     @Autowired
     private StreetRepository streetRepository;
-
+    @Autowired
+    private RuleRepository ruleRepository;
+    @Autowired
+    private SegmentService segmentService;
 
     public Street find(Long streetId)
     {
@@ -30,7 +39,27 @@ public class StreetServiceImpl implements StreetService {
     public Street save(Street street)
     {
         // Saves the given street object and returns the same.
-        streetRepository.save(street);
+        try {
+            Street newStreet = streetRepository.save(street);
+            if (newStreet!=null){
+                Set<Segment> segmentSet = newStreet.getSegments();
+                Set<Rule> ruleSet = newStreet.getRules();
+                if(ruleSet.size()>0) {
+                    for (Rule rule : ruleSet) {
+                        rule.setStreet(new Street(newStreet.getStreetId()));
+                        ruleRepository.save(rule);
+                    }
+                }
+                if(segmentSet.size()>0){
+                    for (Segment segment : segmentSet) {
+                        segment.setStreet(new Street(newStreet.getStreetId()));
+                        segmentService.save(segment);
+                    }
+                }
+            }
+        } catch (HibernateException e) {
+            throw (e);
+        }
         return street;
     }
 

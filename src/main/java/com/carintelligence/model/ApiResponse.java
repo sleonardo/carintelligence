@@ -1,6 +1,9 @@
 package com.carintelligence.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.Expose;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -10,9 +13,13 @@ import java.util.List;
  * Project: carintelligence
  * Created by Leonardo Simoza on 16/3/17.
  **/
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class ApiResponse implements Serializable {
+    @Expose
     private Integer code;
+    @Expose
     private String message;
+    @Expose
     private List<AppEntities> entities;
 
     public ApiResponse() {
@@ -30,7 +37,7 @@ public class ApiResponse implements Serializable {
     }
 
     public String toJSON(){
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
         return gson.toJson(this);
     }
 

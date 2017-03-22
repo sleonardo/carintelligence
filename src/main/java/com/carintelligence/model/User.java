@@ -14,6 +14,7 @@ import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.google.gson.annotations.Expose;
 import org.eclipse.persistence.oxm.annotations.XmlInverseReference;
 
 /**
@@ -30,10 +31,11 @@ import org.eclipse.persistence.oxm.annotations.XmlInverseReference;
 public class User extends AppEntities {
     @Id
     @GeneratedValue
+    @Expose
     private Long id;
-
+    @Expose
     private String name;
-
+    @Expose
     private String emailId;
 
     @XmlInverseReference(mappedBy="assignee")
@@ -45,6 +47,14 @@ public class User extends AppEntities {
     @ElementCollection
     @OneToMany(fetch = FetchType.LAZY, mappedBy="owner")
     private Set<Project> owningProject;
+
+    public User() {
+    }
+
+    public User(String name, String emailId) {
+        this.name = name;
+        this.emailId = emailId;
+    }
 
     public String getEmailId()
     {

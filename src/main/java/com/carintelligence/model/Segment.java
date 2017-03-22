@@ -1,6 +1,10 @@
 package com.carintelligence.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.google.gson.annotations.Expose;
+
 import javax.persistence.*;
+import java.util.Set;
 
 /**
  * @author leonardo
@@ -10,15 +14,39 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "segments")
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Segment extends AppEntities {
     @Id
     @GeneratedValue
+    @Expose
     private Long segmentId;
+    @Expose
     private String name;
+    @Expose
     private Integer sense;
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="street")
+    @Expose
     private Street street;
+
+    @ElementCollection
+    @OneToMany(fetch = FetchType.LAZY, mappedBy="segment")
+    @Expose
+    private Set<Coordinate> coordinates;
+
+    public Segment() {
+    }
+
+    public Segment(Long segmentId) {
+        this.segmentId = segmentId;
+    }
+
+    public Segment(String name, Integer sense, Street street, Set<Coordinate> coordinates) {
+        this.name = name;
+        this.sense = sense;
+        this.street = street;
+        this.coordinates = coordinates;
+    }
 
     public Long getSegmentId() {
         return segmentId;
@@ -50,5 +78,13 @@ public class Segment extends AppEntities {
 
     public void setStreet(Street street) {
         this.street = street;
+    }
+
+    public Set<Coordinate> getCoordinates() {
+        return coordinates;
+    }
+
+    public void setCoordinates(Set<Coordinate> coordinates) {
+        this.coordinates = coordinates;
     }
 }

@@ -1,6 +1,11 @@
 package com.carintelligence.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.google.gson.annotations.Expose;
+
 import javax.persistence.*;
+import javax.validation.constraints.Digits;
+import java.math.BigDecimal;
 
 /**
  * @author leonardo
@@ -10,19 +15,39 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "coordinates")
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Coordinate extends AppEntities {
     @Id
     @GeneratedValue
+    @Expose
     private Long coordinateId;
+    @Expose
     private Integer position;
-    private Float latitude;
-    private Float longitude;
-    @ManyToOne
+    @Expose
+    @Digits(integer=2, fraction=14)
+    private BigDecimal latitude;
+    @Expose
+    @Digits(integer=2, fraction=14)
+    private BigDecimal longitude;
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="segment")
+    @Expose
     private Segment segment;
     @ManyToOne
     @JoinColumn(name="coordinateType")
+    @Expose
     private CoordinateType coordinateType;
+
+    public Coordinate() {
+    }
+
+    public Coordinate(Integer position, BigDecimal latitude, BigDecimal longitude, Segment segment, CoordinateType coordinateType) {
+        this.position = position;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.segment = segment;
+        this.coordinateType = coordinateType;
+    }
 
     public Long getCoordinateId() {
         return coordinateId;
@@ -40,19 +65,19 @@ public class Coordinate extends AppEntities {
         this.position = position;
     }
 
-    public Float getLatitude() {
+    public BigDecimal getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(Float latitude) {
+    public void setLatitude(BigDecimal latitude) {
         this.latitude = latitude;
     }
 
-    public Float getLongitude() {
+    public BigDecimal getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(Float longitude) {
+    public void setLongitude(BigDecimal longitude) {
         this.longitude = longitude;
     }
 

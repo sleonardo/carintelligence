@@ -35,7 +35,7 @@ public class StreetResource {
     public Response list(@DefaultValue("0") @QueryParam("offset") int offset, @DefaultValue("20") @QueryParam("limit") int limit)
     {
         // Handles GET on /streets. Lists all the streets we have in our system.
-        response = new ApiResponse(Response.Status.OK.getStatusCode(), "User");
+        response = new ApiResponse(Response.Status.OK.getStatusCode(), "Street");
         try {
             //Generate response generic
             response = new ApiResponse(Response.Status.OK.getStatusCode(),Response.Status.OK.getReasonPhrase());
@@ -54,23 +54,45 @@ public class StreetResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{streetId}")
-    public Street get(@PathParam("streetId") String streetId)
+    public Response get(@PathParam("streetId") Long streetId)
     {
         // Handles GET on /streets/{streetId}. Returns a single street for the given streetId.
-        System.out.println("\n\n\nThis is the Id I recieved: " + streetId);
-        Long streetIdl = 0L;
-        return streetService.find(streetIdl);
+        response = new ApiResponse(Response.Status.OK.getStatusCode(), "Street");
+        try {
+            //Generate response generic
+            response = new ApiResponse(Response.Status.OK.getStatusCode(),Response.Status.OK.getReasonPhrase());
+            //Load object at list
+            response.getEntities().add(streetService.find(streetId));
+        } catch (Exception e){
+            response = new ApiResponse(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),Response.Status.INTERNAL_SERVER_ERROR.getReasonPhrase());
+            //return error message
+            return Response.status(Response.Status.OK.getStatusCode()).entity(response).build();
+        }
+        //return response
+        return Response.status(Response.Status.OK.getStatusCode()).entity(response.toJSON()).build();
     }
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response create(Street street, @Context final HttpServletResponse response) throws URISyntaxException
+    public Response create(String json) throws URISyntaxException
     {
         // Handles POST on /streets. Creates a new street and adds it into an repository.
-        streetService.save(street);
-        response.setStatus(Response.Status.CREATED.getStatusCode());
-        return Response.created(new URI(resourceURI + street.getStreetId())).build();
+        response = new ApiResponse(Response.Status.CREATED.getStatusCode(), "Street");
+        Street street = new Street();
+        try {
+            if (json!=null) {
+                response = new ApiResponse(Response.Status.CREATED.getStatusCode(), Response.Status.CREATED.getReasonPhrase());
+                street = streetService.save(street.EntityfromJson(json));
+                response.getEntities().add(street);
+            }else{
+                response = new ApiResponse(Response.Status.BAD_REQUEST.getStatusCode(), Response.Status.BAD_REQUEST.getReasonPhrase());
+            }
+        } catch (Exception e) {
+            response = new ApiResponse(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),Response.Status.INTERNAL_SERVER_ERROR.getReasonPhrase());
+        }
+
+        return Response.status(Response.Status.OK.getStatusCode()).entity(response.toJSON()).build();
     }
 
     @PUT
