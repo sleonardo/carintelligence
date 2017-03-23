@@ -1,21 +1,14 @@
 package com.carintelligence.model;
 
-import java.util.Set;
-
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.google.gson.Gson;
 import com.google.gson.annotations.Expose;
-import org.eclipse.persistence.oxm.annotations.XmlInverseReference;
 
 /**
  * @author leonardo
@@ -32,74 +25,54 @@ public class User extends AppEntities {
     @Id
     @GeneratedValue
     @Expose
-    private Long id;
+    private Long userId;
     @Expose
     private String name;
     @Expose
-    private String emailId;
-
-    @XmlInverseReference(mappedBy="assignee")
+    private String email;
+/*
     @ElementCollection
     @OneToMany(fetch = FetchType.LAZY, mappedBy="assignee")
     private Set<Task> tasks;
 
-    @XmlInverseReference(mappedBy="owner")
     @ElementCollection
     @OneToMany(fetch = FetchType.LAZY, mappedBy="owner")
-    private Set<Project> owningProject;
+    private Set<Project> owningProject;*/
 
     public User() {
     }
 
-    public User(String name, String emailId) {
+    public User(String name, String email) {
         this.name = name;
-        this.emailId = emailId;
+        this.email = email;
     }
 
-    public String getEmailId()
-    {
-        return emailId;
+    public User EntityfromJson(String json){
+        Gson gson = new Gson();
+        return gson.fromJson(json, User.class);
     }
 
-
-    public Long getId()
-    {
-        return id;
+    public Long getUserId() {
+        return userId;
     }
 
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
-
-    public Set<Task> getTasks()
-    {
-        return tasks;
-    }
-
-
-    public void setEmailId(String emailId)
-    {
-        this.emailId = emailId;
-    }
-
-
-    public void setId(Long id)
-    {
-        this.id = id;
-    }
-
-
-    public void setName(String name)
-    {
+    public void setName(String name) {
         this.name = name;
     }
 
+    public String getEmail() {
+        return email;
+    }
 
-    public void setTasks(Set<Task> tasks)
-    {
-        this.tasks = tasks;
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

@@ -29,15 +29,23 @@ public class UserRepositoryImpl implements UserRepository
     public User find(Long userId)
     {
         // Returns the User for given userId.
-        return em.find(User.class, userId);
+        try {
+            return em.find(User.class, userId);
+        } catch (Exception e) {
+            throw e;
+        }
     }
 
 
     public User save(User user)
     {
         // Saves the given user object and returns the same.
-        em.persist(user);
-        em.flush();
+        try {
+            em.persist(user);
+            em.flush();
+        } catch (Exception e) {
+            throw e;
+        }
         return user;
     }
 
@@ -47,12 +55,17 @@ public class UserRepositoryImpl implements UserRepository
     {
         // Returns all the users in our system.
 //        TypedQuery<User> query = em.createNamedQuery("User.findAll", User.class);
-        CriteriaBuilder cb = em.getCriteriaBuilder();
+        TypedQuery<User> query = null;
+        try {
+            CriteriaBuilder cb = em.getCriteriaBuilder();
 
-        CriteriaQuery<User> q = cb.createQuery(User.class);
-        Root<User> c = q.from(User.class);
-        q.select(c);
-        TypedQuery<User> query = em.createQuery(q);
+            CriteriaQuery<User> q = cb.createQuery(User.class);
+            Root<User> c = q.from(User.class);
+            q.select(c);
+            query = em.createQuery(q);
+        } catch (Exception e) {
+            throw e;
+        }
         return query.getResultList();
     }
 
@@ -62,12 +75,17 @@ public class UserRepositoryImpl implements UserRepository
     {
         // Returns the list of paginated users.
 //        TypedQuery<User> query = em.createNamedQuery("User.findAll", User.class);
-        CriteriaBuilder cb = em.getCriteriaBuilder();
+        TypedQuery<User> query = null;
+        try {
+            CriteriaBuilder cb = em.getCriteriaBuilder();
 
-        CriteriaQuery<User> q = cb.createQuery(User.class);
-        Root<User> c = q.from(User.class);
-        q.select(c);
-        TypedQuery<User> query = em.createQuery(q);
+            CriteriaQuery<User> q = cb.createQuery(User.class);
+            Root<User> c = q.from(User.class);
+            q.select(c);
+            query = em.createQuery(q);
+        } catch (Exception e) {
+            throw e;
+        }
         return query.setFirstResult(offset).setMaxResults(limit).getResultList();
     }
 
@@ -76,7 +94,7 @@ public class UserRepositoryImpl implements UserRepository
     public User update(User user, Long userId)
     {
         // Updates the given user with new data.
-        user.setId(userId);
+        user.setUserId(userId);
         User updatedUser = em.merge(user);
         em.flush();
         return updatedUser;
@@ -88,7 +106,8 @@ public class UserRepositoryImpl implements UserRepository
     {
         // Deletes the user with the given userId.
         User userToBeDeleted = em.find(User.class, userId);
-        em.remove(userToBeDeleted);
+        if(userToBeDeleted!=null)
+            em.remove(userToBeDeleted);
         return userToBeDeleted;
     }
 

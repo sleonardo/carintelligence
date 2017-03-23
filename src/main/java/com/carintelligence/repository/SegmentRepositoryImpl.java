@@ -82,7 +82,8 @@ public class SegmentRepositoryImpl implements SegmentRepository {
     {
         // Deletes the segment with the given segmentId.
         Segment segmentToBeDeleted = em.find(Segment.class, segmentId);
-        em.remove(segmentToBeDeleted);
+        if(segmentToBeDeleted!=null)
+            em.remove(segmentToBeDeleted);
         return segmentToBeDeleted;
     }
 }

@@ -82,7 +82,8 @@ public class StreetRepositoryImpl implements StreetRepository {
     {
         // Deletes the street with the given streetId.
         Street streetToBeDeleted = em.find(Street.class, streetId);
-        em.remove(streetToBeDeleted);
+        if(streetToBeDeleted!=null)
+            em.remove(streetToBeDeleted);
         return streetToBeDeleted;
     }
 }

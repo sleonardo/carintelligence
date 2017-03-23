@@ -82,7 +82,8 @@ public class RuleRepositoryImpl implements RuleRepository {
     {
         // Deletes the rule with the given ruleId.
         Rule ruleToBeDeleted = em.find(Rule.class, ruleId);
-        em.remove(ruleToBeDeleted);
+        if(ruleToBeDeleted!=null)
+            em.remove(ruleToBeDeleted);
         return ruleToBeDeleted;
     }
 }

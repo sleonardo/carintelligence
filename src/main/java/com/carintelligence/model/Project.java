@@ -20,7 +20,6 @@ import javax.xml.bind.annotation.XmlRootElement;
  * Project: carintelligence
  * Created by Leonardo Simoza on 09/3/17.
  **/
-@XmlRootElement
 @Entity
 @Table(name = "projects")
 @NamedQueries({ @NamedQuery(name = "Project.findAll", query = "SELECT p FROM Project p") })

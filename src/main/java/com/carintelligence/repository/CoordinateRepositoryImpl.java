@@ -82,7 +82,8 @@ public class CoordinateRepositoryImpl implements CoordinateRepository {
     {
         // Deletes the coordinate with the given coordinateId.
         Coordinate coordinateToBeDeleted = em.find(Coordinate.class, coordinateId);
-        em.remove(coordinateToBeDeleted);
+        if(coordinateToBeDeleted!=null)
+            em.remove(coordinateToBeDeleted);
         return coordinateToBeDeleted;
     }
 }

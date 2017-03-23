@@ -1,10 +1,7 @@
 package com.carintelligence.rest;
 
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -15,7 +12,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -51,38 +47,61 @@ public class UserResource
             //Creamos la respuesta generica del API
             response = new ApiResponse(Response.Status.OK.getStatusCode(),Response.Status.OK.getReasonPhrase());
             //cargamos el objeto a leer desde el cliente
-            List<User> entitiesList = userService.paginate(offset, limit);
-            response.getEntities().addAll(entitiesList);
+            response.getEntities().addAll(userService.paginate(offset, limit));
             //retornamos la respuesta
         } catch (Exception e){
             response = new ApiResponse(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),Response.Status.INTERNAL_SERVER_ERROR.getReasonPhrase());
             return Response.status(Response.Status.OK.getStatusCode()).entity(response).build();
         }
 
-        return Response.status(Response.Status.OK.getStatusCode()).entity(response).build();
-//        return userService.paginate(offset, limit);
+        return Response.status(Response.Status.OK.getStatusCode()).entity(response.toJSON()).build();
     }
 
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{userId}")
-    public User get(@PathParam("userId") Long userId)
+    public Response get(@PathParam("userId") Long userId)
     {
         // Handles GET on /users/{userId}. Returns a single user for the given userId.
-        return userService.find(userId);
+        response = new ApiResponse(Response.Status.OK.getStatusCode(), "Street");
+        try {
+            //Generate response generic
+            response = new ApiResponse(Response.Status.OK.getStatusCode(),Response.Status.OK.getReasonPhrase());
+            User user = userService.find(userId);
+            //Load object at list
+            if(user!=null)
+                response.getEntities().add(user);
+        } catch (Exception e){
+            response = new ApiResponse(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),Response.Status.INTERNAL_SERVER_ERROR.getReasonPhrase());
+            //return error message
+            return Response.status(Response.Status.OK.getStatusCode()).entity(response).build();
+        }
+        //return response
+        return Response.status(Response.Status.OK.getStatusCode()).entity(response.toJSON()).build();
     }
 
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes( MediaType.APPLICATION_JSON)
-    public Response create(User user, @Context final HttpServletResponse response) throws URISyntaxException
+    public Response create(User user) throws URISyntaxException
     {
         // Handles POST on /users. Creates a new user and adds it into an repository.
-        userService.save(user);
-        response.setStatus(Response.Status.CREATED.getStatusCode());
-        return Response.created(new URI(resourceURI + user.getId())).build();
+        response = new ApiResponse(Response.Status.CREATED.getStatusCode(), "User");
+        try {
+            if (user!=null) {
+                response = new ApiResponse(Response.Status.CREATED.getStatusCode(), Response.Status.CREATED.getReasonPhrase());
+                user = userService.save(user);
+                response.getEntities().add(user);
+            }else{
+                response = new ApiResponse(Response.Status.BAD_REQUEST.getStatusCode(), Response.Status.BAD_REQUEST.getReasonPhrase());
+            }
+        } catch (Exception e) {
+            response = new ApiResponse(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),Response.Status.INTERNAL_SERVER_ERROR.getReasonPhrase());
+        }
+
+        return Response.status(Response.Status.OK.getStatusCode()).entity(response.toJSON()).build();
     }
 
 
@@ -90,18 +109,48 @@ public class UserResource
     @Path("/{userId}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public User update(User user, @PathParam("userId") Long userId)
+    public Response update(User user, @PathParam("userId") Long userId)
     {
         // Handles PUT on /users/userId. Updates the existing user with the new values.
-        return userService.update(user, userId);
+        response = new ApiResponse(Response.Status.CREATED.getStatusCode(), "User");
+        try {
+            if (user!=null && userId!=null) {
+                response = new ApiResponse(Response.Status.OK.getStatusCode(), Response.Status.OK.getReasonPhrase());
+                user = userService.update(user, userId);
+                response.getEntities().add(user);
+            }else{
+                response = new ApiResponse(Response.Status.BAD_REQUEST.getStatusCode(), Response.Status.BAD_REQUEST.getReasonPhrase());
+            }
+        } catch (Exception e) {
+            response = new ApiResponse(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),Response.Status.INTERNAL_SERVER_ERROR.getReasonPhrase());
+        }
+
+        return Response.status(Response.Status.OK.getStatusCode()).entity(response.toJSON()).build();
     }
 
 
     @DELETE
     @Path("/{userId}")
-    public User delete(@PathParam("userId") Long userId)
+    public Response delete(@PathParam("userId") Long userId)
     {
         // Handles DELETE on /users/userId. Deletes the existing user and returns the same.
-        return userService.delete(userId);
+        response = new ApiResponse(Response.Status.OK.getStatusCode(), "User");
+        try {
+            //Generate response generic
+            response = new ApiResponse(Response.Status.OK.getStatusCode(),"User removed");
+            User user = userService.delete(userId);
+            //Load object at list
+            if(user!=null)
+                response.getEntities().add(user);
+            else
+                response = new ApiResponse(Response.Status.NOT_FOUND.getStatusCode(),Response.Status.NOT_FOUND.getReasonPhrase());
+        } catch (Exception e){
+            response = new ApiResponse(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),Response.Status.INTERNAL_SERVER_ERROR.getReasonPhrase());
+            //return error message
+            return Response.status(Response.Status.OK.getStatusCode()).entity(response).build();
+        }
+        //return response
+        return Response.status(Response.Status.OK.getStatusCode()).entity(response.toJSON()).build();
+
     }
 }

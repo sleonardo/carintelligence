@@ -99,17 +99,48 @@ public class StreetResource {
     @Path("/{streetId}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Street update(Street street, @PathParam("streetId") Long streetId)
+    public Response update(Street street, @PathParam("streetId") Long streetId)
     {
         // Handles PUT on /streets/streetId. Updates the existing street with the new values.
-        return streetService.update(street, streetId);
+        response = new ApiResponse(Response.Status.CREATED.getStatusCode(), "User");
+        try {
+            if (street!=null && streetId!=null) {
+                response = new ApiResponse(Response.Status.OK.getStatusCode(), Response.Status.OK.getReasonPhrase());
+                street = streetService.update(street, streetId);
+                response.getEntities().add(street);
+            }else{
+                response = new ApiResponse(Response.Status.BAD_REQUEST.getStatusCode(), Response.Status.BAD_REQUEST.getReasonPhrase());
+            }
+        } catch (Exception e) {
+            response = new ApiResponse(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),Response.Status.INTERNAL_SERVER_ERROR.getReasonPhrase());
+        }
+
+        return Response.status(Response.Status.OK.getStatusCode()).entity(response.toJSON()).build();
+
     }
 
     @DELETE
     @Path("/{streetId}")
-    public Street delete(@PathParam("streetId") Long streetId)
+    public Response delete(@PathParam("streetId") Long streetId)
     {
         // Handles DELETE on /streets/streetId. Deletes the existing street and returns the same.
-        return streetService.delete(streetId);
+        response = new ApiResponse(Response.Status.OK.getStatusCode(), "User");
+        try {
+            //Generate response generic
+            response = new ApiResponse(Response.Status.OK.getStatusCode(),"User removed");
+            Street street = streetService.delete(streetId);
+            //Load object at list
+            if(street!=null)
+                response.getEntities().add(street);
+            else
+                response = new ApiResponse(Response.Status.NOT_FOUND.getStatusCode(),Response.Status.NOT_FOUND.getReasonPhrase());
+        } catch (Exception e){
+            response = new ApiResponse(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),Response.Status.INTERNAL_SERVER_ERROR.getReasonPhrase());
+            //return error message
+            return Response.status(Response.Status.OK.getStatusCode()).entity(response).build();
+        }
+        //return response
+        return Response.status(Response.Status.OK.getStatusCode()).entity(response.toJSON()).build();
+
     }
 }
