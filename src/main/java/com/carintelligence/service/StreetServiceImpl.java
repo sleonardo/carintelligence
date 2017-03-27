@@ -33,7 +33,26 @@ public class StreetServiceImpl implements StreetService {
     public Street find(Long streetId)
     {
         // Returns the Street for given streetId.
-        return streetRepository.find(streetId);
+        Street street = streetRepository.find(streetId);
+        if (street!=null){
+            Set<Segment> segmentSet = street.getSegments();
+            Set<Rule> ruleSet = street.getRules();
+            if(ruleSet.size()>0) {
+                for (Rule rule : ruleSet) {
+                    rule.setStreet(new Street(street.getStreetId()));
+                }
+            }
+            if(segmentSet.size()>0){
+                for (Segment segment : segmentSet) {
+                    segment.setStreet(new Street(street.getStreetId()));
+                    for (Coordinate coordinate : segment.getCoordinates()) {
+                        coordinate.setSegment(new Segment(segment.getSegmentId()));
+                    }
+                }
+            }
+        }
+
+        return street;
     }
 
 
