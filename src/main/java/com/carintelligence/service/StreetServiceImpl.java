@@ -1,5 +1,6 @@
 package com.carintelligence.service;
 
+import com.carintelligence.model.Coordinate;
 import com.carintelligence.model.Rule;
 import com.carintelligence.model.Segment;
 import com.carintelligence.model.Street;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -91,7 +93,31 @@ public class StreetServiceImpl implements StreetService {
     @Override
     public List<Street> paginate(int offset, int limit)
     {
-        // Paginates the streets objects. 
-        return streetRepository.paginate(offset, limit);
+        // Paginates the streets objects.
+        List<Street> list = streetRepository.paginate(offset, limit);
+        List<Street> listStreet = new ArrayList<>();
+        if (list!=null){
+            for (Street street : list) {
+                Set<Segment> segmentSet = street.getSegments();
+                Set<Rule> ruleSet = street.getRules();
+                if(ruleSet.size()>0) {
+                    for (Rule rule : ruleSet) {
+                        rule.setStreet(new Street(street.getStreetId()));
+                    }
+                }
+                if(segmentSet.size()>0){
+                    for (Segment segment : segmentSet) {
+                        segment.setStreet(new Street(street.getStreetId()));
+                        for (Coordinate coordinate : segment.getCoordinates()) {
+                            coordinate.setSegment(new Segment(segment.getSegmentId()));
+                        }
+                    }
+                }
+                listStreet.add(street);
+            }
+        }
+
+
+        return listStreet;
     }
 }
