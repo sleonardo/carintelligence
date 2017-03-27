@@ -16,5 +16,5 @@ public interface RuleRepository {
     List<Rule> paginate(int offset, int limit);
     Rule save(Rule rule);
     Rule update(Rule Rule, Long ruleId);
-    Rule delete(Long ruleId);
+    Rule delete(Long streetId, Long ruleId);
 }

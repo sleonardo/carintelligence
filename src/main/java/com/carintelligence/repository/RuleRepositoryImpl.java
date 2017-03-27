@@ -8,6 +8,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.List;
 
@@ -26,6 +27,22 @@ public class RuleRepositoryImpl implements RuleRepository {
     {
         // Returns the Rule for given ruleId.
         return em.find(Rule.class, ruleId);
+    }
+
+    public Rule find(Long streetId, Long ruleId)
+    {
+        // Returns the Rule for given ruleId.
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+
+        CriteriaQuery<Rule> q = cb.createQuery(Rule.class);
+        Root<Rule> c = q.from(Rule.class);
+        Predicate p = cb.conjunction();
+        p = cb.and(cb.equal(c.get("street"), streetId), cb.equal(c.get("ruleId"), ruleId));
+        q.select(c);
+        q.where(p);
+        TypedQuery<Rule> query = em.createQuery(q);
+
+        return query.getSingleResult();
     }
 
 
@@ -78,10 +95,10 @@ public class RuleRepositoryImpl implements RuleRepository {
 
 
     @Override
-    public Rule delete(Long ruleId)
+    public Rule delete(Long streetId, Long ruleId)
     {
         // Deletes the rule with the given ruleId.
-        Rule ruleToBeDeleted = em.find(Rule.class, ruleId);
+        Rule ruleToBeDeleted = find(streetId, ruleId);
         if(ruleToBeDeleted!=null)
             em.remove(ruleToBeDeleted);
         return ruleToBeDeleted;

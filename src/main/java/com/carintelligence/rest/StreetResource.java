@@ -1,7 +1,9 @@
 package com.carintelligence.rest;
 
 import com.carintelligence.model.ApiResponse;
+import com.carintelligence.model.Rule;
 import com.carintelligence.model.Street;
+import com.carintelligence.service.RuleService;
 import com.carintelligence.service.StreetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,6 +27,8 @@ import java.util.List;
 public class StreetResource {
     @Autowired
     private StreetService streetService;
+    @Autowired
+    private RuleService ruleService;
 
     private final String resourceURI = "/streets";
 
@@ -124,14 +128,42 @@ public class StreetResource {
     public Response delete(@PathParam("streetId") Long streetId)
     {
         // Handles DELETE on /streets/streetId. Deletes the existing street and returns the same.
-        response = new ApiResponse(Response.Status.OK.getStatusCode(), "User");
+        response = new ApiResponse(Response.Status.OK.getStatusCode(), "Street");
         try {
             //Generate response generic
-            response = new ApiResponse(Response.Status.OK.getStatusCode(),"User removed");
+            response = new ApiResponse(Response.Status.OK.getStatusCode(), "Street removed");
             Street street = streetService.delete(streetId);
             //Load object at list
-            if(street!=null)
+            if (street != null){
+                street.setRules(null);
+                street.setSegments(null);
                 response.getEntities().add(street);
+            }
+            else
+                response = new ApiResponse(Response.Status.NOT_FOUND.getStatusCode(),Response.Status.NOT_FOUND.getReasonPhrase());
+        } catch (Exception e){
+            response = new ApiResponse(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),Response.Status.INTERNAL_SERVER_ERROR.getReasonPhrase());
+            //return error message
+            return Response.status(Response.Status.OK.getStatusCode()).entity(response).build();
+        }
+        //return response
+        return Response.status(Response.Status.OK.getStatusCode()).entity(response.toJSON()).build();
+
+    }
+
+    @DELETE
+    @Path("/{streetId}/rule/{ruleId}")
+    public Response delete(@PathParam("streetId") Long streetId,@PathParam("ruleId") Long ruleId)
+    {
+        // Handles DELETE on /streets/streetId. Deletes the existing street and returns the same.
+        response = new ApiResponse(Response.Status.OK.getStatusCode(), "Rule");
+        try {
+            //Generate response generic
+            response = new ApiResponse(Response.Status.OK.getStatusCode(), "Rule removed");
+            Rule rule = ruleService.delete(streetId, ruleId);
+            //Load object at list
+            if (rule != null)
+                response.getEntities().add(rule);
             else
                 response = new ApiResponse(Response.Status.NOT_FOUND.getStatusCode(),Response.Status.NOT_FOUND.getReasonPhrase());
         } catch (Exception e){

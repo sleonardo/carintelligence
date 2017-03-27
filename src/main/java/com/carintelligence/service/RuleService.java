@@ -15,5 +15,5 @@ public interface RuleService {
     List<Rule> paginate(int offset, int limit);
     Rule save(Rule rule);
     Rule update(Rule rule, Long ruleId);
-    Rule delete(Long ruleId);
+    Rule delete(Long streetId, Long ruleId);
 }

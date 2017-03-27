@@ -57,10 +57,10 @@ public class RuleServiceImpl implements RuleService {
 
 
     @Transactional
-    public Rule delete(Long ruleId)
+    public Rule delete(Long streetId, Long ruleId)
     {
         // Deletes the rule with the give ruleId and returns the same.
-        return ruleRepository.delete(ruleId);
+        return ruleRepository.delete(streetId, ruleId);
     }
 
 

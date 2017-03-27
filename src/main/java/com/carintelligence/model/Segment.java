@@ -30,7 +30,7 @@ public class Segment extends AppEntities {
     private Street street;
 
     @ElementCollection
-    @OneToMany(fetch = FetchType.LAZY, mappedBy="segment")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy="segment", orphanRemoval = true)
     @Expose
     private Set<Coordinate> coordinates;
 
