@@ -15,6 +15,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -174,5 +175,32 @@ public class StreetResource {
         //return response
         return Response.status(Response.Status.OK.getStatusCode()).entity(response.toJSON()).build();
 
+    }
+
+    @POST
+    @Path("/{streetId}/rule/")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response create(List<Rule> ruleList, @PathParam("streetId") Long streetId)
+    {
+        // Handles PUT on /streets/streetId. Updates the existing street with the new values.
+        response = new ApiResponse(Response.Status.CREATED.getStatusCode(), "Rule");
+        try {
+            if (ruleList.size()>0 && streetId!=null) {
+                List<Rule> newRuleList = new ArrayList<>();
+                for (Rule rule: ruleList) {
+                    rule.setStreet(new Street(streetId));
+                    response = new ApiResponse(Response.Status.OK.getStatusCode(), Response.Status.OK.getReasonPhrase());
+                    rule = ruleService.save(rule);
+                    newRuleList.add(rule);
+                }
+                response.getEntities().addAll(newRuleList);
+            }else{
+                response = new ApiResponse(Response.Status.BAD_REQUEST.getStatusCode(), Response.Status.BAD_REQUEST.getReasonPhrase());
+            }
+        } catch (Exception e) {
+            response = new ApiResponse(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(),Response.Status.INTERNAL_SERVER_ERROR.getReasonPhrase());
+        }
+        return Response.status(Response.Status.OK.getStatusCode()).entity(response.toJSON()).build();
     }
 }

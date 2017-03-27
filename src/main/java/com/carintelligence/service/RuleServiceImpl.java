@@ -32,7 +32,7 @@ public class RuleServiceImpl implements RuleService {
     {
         // Saves the given rule object and returns the same.
         try {
-            ruleRepository.save(rule);
+            rule = ruleRepository.save(rule);
         } catch (HibernateException e) {
             throw (e);
         }
