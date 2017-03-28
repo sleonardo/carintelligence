@@ -26,7 +26,6 @@ public class Segment extends AppEntities {
     private Integer sense;
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="street")
-    @Expose
     private Street street;
 
     @ElementCollection

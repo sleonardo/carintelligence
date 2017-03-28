@@ -31,7 +31,7 @@ public class Coordinate extends AppEntities {
     private BigDecimal longitude;
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="segment")
-    @Expose
+
     private Segment segment;
     @ManyToOne
     @JoinColumn(name="coordinateType")

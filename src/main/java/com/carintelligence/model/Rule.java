@@ -37,7 +37,6 @@ public class Rule extends AppEntities {
     private Integer frecuency;
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="street")
-    @Expose
     private Street street;
 
     public Rule() {
