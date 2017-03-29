@@ -29,7 +29,7 @@ public class Segment extends AppEntities {
     private Street street;
 
     @ElementCollection
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy="segment", orphanRemoval = true)
+    @OneToMany(mappedBy="segment", orphanRemoval = true)
     @Expose
     private Set<Coordinate> coordinates;
 

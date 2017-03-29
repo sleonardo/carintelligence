@@ -112,31 +112,6 @@ public class StreetServiceImpl implements StreetService {
     @Override
     public List<Street> paginate(int offset, int limit)
     {
-        // Paginates the streets objects.
-        List<Street> list = streetRepository.paginate(offset, limit);
-        List<Street> listStreet = new ArrayList<>();
-        if (list!=null){
-            for (Street street : list) {
-                Set<Segment> segmentSet = street.getSegments();
-                Set<Rule> ruleSet = street.getRules();
-                if(ruleSet.size()>0) {
-                    for (Rule rule : ruleSet) {
-                        rule.setStreet(new Street(street.getStreetId()));
-                    }
-                }
-                if(segmentSet.size()>0){
-                    for (Segment segment : segmentSet) {
-                        segment.setStreet(new Street(street.getStreetId()));
-                        for (Coordinate coordinate : segment.getCoordinates()) {
-                            coordinate.setSegment(new Segment(segment.getSegmentId()));
-                        }
-                    }
-                }
-                listStreet.add(street);
-            }
-        }
-
-
-        return listStreet;
+        return streetRepository.paginate(offset, limit);
     }
 }

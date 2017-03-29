@@ -15,7 +15,7 @@
     <bean class="com.carintelligence.util.EnvPropertyPlaceholderConfigurer">
         <property name="location" value="classpath:root.properties" />
     </bean>
-    
+
     <!-- This bean tells the spring to support context bean annotation. -->
     <bean
         class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
@@ -49,6 +49,11 @@
     <!-- Makes the transaction manager available for us to use in our application. -->
     <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
         <property name="entityManagerFactory" ref="entityManagerFactory" />
+    </bean>
+
+    <bean id="sessionFactory" class="org.springframework.orm.jpa.vendor.HibernateJpaSessionFactoryBean">
+        <property name="entityManagerFactory" ref="entityManagerFactory" />
+        <!-- Are there any other properties required? -->
     </bean>
 
     <!-- Instruct spring that we would like to use annotations to start and 
