@@ -32,7 +32,7 @@ public class Street extends AppEntities {
     private User user;
 
     @ElementCollection
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy="street", orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy="street")
     @Expose
     private Set<Segment> segments;
 

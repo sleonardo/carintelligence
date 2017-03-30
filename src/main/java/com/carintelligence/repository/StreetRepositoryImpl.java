@@ -74,7 +74,7 @@ public class StreetRepositoryImpl implements StreetRepository {
             q.select(c);
             TypedQuery<Street> query = em.createQuery(q);
             news = query.setFirstResult(offset).setMaxResults(limit).getResultList();
-            if (news!=null){
+            /*if (news!=null){
                 for (Street street : news) {
                     Set<Segment> segmentSet = street.getSegments();
                     Set<Rule> ruleSet = street.getRules();
@@ -93,8 +93,8 @@ public class StreetRepositoryImpl implements StreetRepository {
                     }
                     listStreet.add(street);
                 }
-            }
-            return listStreet;
+            }*/
+            return news;
         } finally {
             em.detach(news);
         }
